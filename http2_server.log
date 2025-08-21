@@ -1,0 +1,157 @@
+2025-08-19 11:53:44,319 - asyncio - DEBUG - Using selector: KqueueSelector
+2025-08-19 11:53:44,319 - __main__ - INFO - Starting HTTP/2 server on https://127.0.0.1:8443
+2025-08-19 11:53:44,324 - __main__ - INFO - Running on https://127.0.0.1:8443 (CTRL + C to quit)
+2025-08-19 11:55:57,101 - __main__ - INFO - 127.0.0.1:50471 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,102 - __main__ - INFO - 127.0.0.1:50472 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,102 - __main__ - INFO - 127.0.0.1:50473 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,102 - __main__ - INFO - 127.0.0.1:50474 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,103 - __main__ - INFO - 127.0.0.1:50475 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,103 - __main__ - INFO - 127.0.0.1:50476 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,103 - __main__ - INFO - 127.0.0.1:50477 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,103 - __main__ - INFO - 127.0.0.1:50478 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,104 - __main__ - INFO - 127.0.0.1:50479 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,104 - __main__ - INFO - 127.0.0.1:50480 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,104 - __main__ - INFO - 127.0.0.1:50481 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,104 - __main__ - INFO - 127.0.0.1:50482 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,105 - __main__ - INFO - 127.0.0.1:50483 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,105 - __main__ - INFO - 127.0.0.1:50484 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,105 - __main__ - INFO - 127.0.0.1:50485 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,106 - __main__ - INFO - 127.0.0.1:50486 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,106 - __main__ - INFO - 127.0.0.1:50487 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,106 - __main__ - INFO - 127.0.0.1:50470 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,113 - __main__ - INFO - REQUEST #1
+2025-08-19 11:55:57,113 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,113 - __main__ - INFO - REQUEST #2
+2025-08-19 11:55:57,113 - __main__ - INFO - REQUEST #3
+2025-08-19 11:55:57,114 - __main__ - INFO - REQUEST #4
+2025-08-19 11:55:57,114 - __main__ - INFO - REQUEST #5
+2025-08-19 11:55:57,114 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,114 - __main__ - INFO - REQUEST #6
+2025-08-19 11:55:57,114 - __main__ - INFO - REQUEST #7
+2025-08-19 11:55:57,115 - __main__ - INFO - REQUEST #8
+2025-08-19 11:55:57,115 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,115 - __main__ - INFO - REQUEST #9
+2025-08-19 11:55:57,115 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,115 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,115 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,116 - __main__ - INFO - REQUEST #10
+2025-08-19 11:55:57,118 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,116 - __main__ - INFO - REQUEST #11
+2025-08-19 11:55:57,116 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,116 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,117 - __main__ - INFO - REQUEST #12
+2025-08-19 11:55:57,117 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,117 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,117 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,118 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,118 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,118 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,118 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,116 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,119 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,119 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,119 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,119 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,119 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,119 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,120 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,120 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,120 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,120 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,120 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,121 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,121 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,121 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,121 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,121 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,121 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,122 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,122 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,122 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,122 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,122 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,123 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,123 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,123 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,124 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,124 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,124 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,124 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,125 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,126 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,384 - __main__ - INFO - 127.0.0.1:50521 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,385 - __main__ - INFO - 127.0.0.1:50522 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,386 - __main__ - INFO - 127.0.0.1:50523 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,386 - __main__ - INFO - 127.0.0.1:50524 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" - - "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,634 - __main__ - INFO - REQUEST #13
+2025-08-19 11:55:57,634 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,634 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,634 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,634 - __main__ - INFO - REQUEST #14
+2025-08-19 11:55:57,634 - __main__ - INFO - REQUEST #15
+2025-08-19 11:55:57,635 - __main__ - INFO - REQUEST #16
+2025-08-19 11:55:57,635 - __main__ - INFO - REQUEST #17
+2025-08-19 11:55:57,635 - __main__ - INFO - REQUEST #18
+2025-08-19 11:55:57,635 - __main__ - INFO - REQUEST #19
+2025-08-19 11:55:57,635 - __main__ - INFO - REQUEST #20
+2025-08-19 11:55:57,635 - __main__ - INFO - REQUEST #21
+2025-08-19 11:55:57,635 - __main__ - INFO - REQUEST #22
+2025-08-19 11:55:57,636 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,636 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,636 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,636 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,636 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,636 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,636 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,637 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,637 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,637 - __main__ - INFO -   Method: GET
+2025-08-19 11:55:57,637 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,637 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,637 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,638 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,638 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,638 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,638 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,638 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,638 - __main__ - INFO -   Path: /api/data
+2025-08-19 11:55:57,639 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,639 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,639 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,639 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,639 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,640 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,640 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,640 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,641 - __main__ - INFO -   Headers: {'Host': '127.0.0.1:8443', 'User-Agent': 'RapidResetAttacker/1.0', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+2025-08-19 11:55:57,641 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,641 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,641 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,641 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,641 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,641 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,642 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,642 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,642 - __main__ - INFO -   Remote Address: 127.0.0.1
+2025-08-19 11:55:57,872 - __main__ - INFO - 127.0.0.1:50472 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,872 - __main__ - INFO - 127.0.0.1:50480 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,872 - __main__ - INFO - 127.0.0.1:50482 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,873 - __main__ - INFO - 127.0.0.1:50473 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,873 - __main__ - INFO - 127.0.0.1:50481 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,874 - __main__ - INFO - 127.0.0.1:50479 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,874 - __main__ - INFO - 127.0.0.1:50471 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,874 - __main__ - INFO - 127.0.0.1:50478 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,875 - __main__ - INFO - 127.0.0.1:50477 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,875 - __main__ - INFO - 127.0.0.1:50476 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,875 - __main__ - INFO - 127.0.0.1:50475 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:57,875 - __main__ - INFO - 127.0.0.1:50474 - - [19/Aug/2025:11:55:57 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:58,635 - __main__ - INFO - 127.0.0.1:50522 - - [19/Aug/2025:11:55:58 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:58,635 - __main__ - INFO - 127.0.0.1:50485 - - [19/Aug/2025:11:55:58 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:58,635 - __main__ - INFO - 127.0.0.1:50524 - - [19/Aug/2025:11:55:58 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:58,635 - __main__ - INFO - 127.0.0.1:50487 - - [19/Aug/2025:11:55:58 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:58,636 - __main__ - INFO - 127.0.0.1:50523 - - [19/Aug/2025:11:55:58 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:58,636 - __main__ - INFO - 127.0.0.1:50521 - - [19/Aug/2025:11:55:58 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:58,636 - __main__ - INFO - 127.0.0.1:50484 - - [19/Aug/2025:11:55:58 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:58,636 - __main__ - INFO - 127.0.0.1:50486 - - [19/Aug/2025:11:55:58 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:58,636 - __main__ - INFO - 127.0.0.1:50483 - - [19/Aug/2025:11:55:58 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"
+2025-08-19 11:55:58,637 - __main__ - INFO - 127.0.0.1:50470 - - [19/Aug/2025:11:55:58 +0500] "GET /api/data 1.1" 200 76 "-" "RapidResetAttacker/1.0"

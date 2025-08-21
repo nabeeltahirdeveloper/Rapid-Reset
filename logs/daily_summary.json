@@ -1,0 +1,20 @@
+{
+  "date": "2025-08-20T12:33:32.484144",
+  "log_files": [
+    {
+      "filename": "detailed_server.log",
+      "size_mb": 0.0
+    },
+    {
+      "filename": "attack_simulation.log",
+      "size_mb": 0.0
+    },
+    {
+      "filename": "normal_traffic.log",
+      "size_mb": 0.0
+    }
+  ],
+  "total_size_mb": 0.0,
+  "request_counts": {},
+  "error_counts": {}
+}

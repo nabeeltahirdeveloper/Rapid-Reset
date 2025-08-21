@@ -1,0 +1,6 @@
+2025-08-20 12:33:38,110 - NORMAL_TRAFFIC - Starting 24-hour normal traffic generation...
+2025-08-20 12:33:38,111 - NORMAL_TRAFFIC - Starting normal traffic generation for 25.0 hours
+2025-08-20 12:37:19,280 - NORMAL_TRAFFIC - Normal requests: 50, Rate: 0.23 req/s, Elapsed: 0.06h
+2025-08-20 12:41:20,961 - NORMAL_TRAFFIC - Normal requests: 100, Rate: 0.22 req/s, Elapsed: 0.13h
+2025-08-20 12:45:48,779 - NORMAL_TRAFFIC - Normal requests: 150, Rate: 0.21 req/s, Elapsed: 0.20h
+2025-08-20 12:49:49,107 - NORMAL_TRAFFIC - Normal requests: 200, Rate: 0.21 req/s, Elapsed: 0.27h
