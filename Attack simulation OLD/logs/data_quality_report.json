@@ -1,0 +1,26 @@
+{
+  "assessment_timestamp": "2025-08-22T12:01:41.774439",
+  "total_records": 134682,
+  "time_range": {
+    "start": "2025-08-20 12:33:38.111911",
+    "end": "2025-08-22 13:48:04.104510",
+    "duration_hours": 49.24055349972222
+  },
+  "data_completeness": {
+    "total_missing_values": 2220170,
+    "completeness_percentage": 38.95
+  },
+  "event_distribution": {
+    "request_start": 59190,
+    "request_end": 59189,
+    "normal_request": 16284,
+    "attack_end": 8,
+    "attack_start": 8,
+    "normal_traffic_start": 2,
+    "error": 1
+  },
+  "data_quality_issues": {
+    "duplicate_timestamps": 0,
+    "large_time_gaps": 2
+  }
+}

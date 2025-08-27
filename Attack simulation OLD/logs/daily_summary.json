@@ -1,0 +1,20 @@
+{
+  "date": "2025-08-21T14:45:08.904027",
+  "log_files": [
+    {
+      "filename": "attack_simulation.log",
+      "size_mb": 0.02
+    },
+    {
+      "filename": "detailed_server.log",
+      "size_mb": 4.5
+    },
+    {
+      "filename": "normal_traffic.log",
+      "size_mb": 0.0
+    }
+  ],
+  "total_size_mb": 4.52,
+  "request_counts": {},
+  "error_counts": {}
+}

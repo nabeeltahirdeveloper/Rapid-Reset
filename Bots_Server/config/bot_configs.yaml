@@ -1,0 +1,46 @@
+servers:
+  - "http://localhost:8000"
+  - "http://localhost:8001"
+  - "http://localhost:8002"
+
+normal_bots:
+  web_browser_count: 10
+  streaming_count: 5
+  api_client_count: 8
+  mobile_app_count: 6
+
+attack_bots:
+  rapid_reset:
+    intensities: ["low", "medium", "high"]
+    count_per_intensity: 2
+  
+  stream_flood:
+    count: 3
+  
+  connection_exhaustion:
+    count: 2
+
+scenarios:
+  baseline_normal:
+    normal_traffic_duration: 1800  # 30 minutes
+    attack_duration: 0
+    baseline_duration: 300  # 5 minutes
+  
+  light_attack:
+    normal_traffic_duration: 600   # 10 minutes
+    baseline_duration: 120         # 2 minutes
+    attack_duration: 300           # 5 minutes
+  
+  heavy_attack:
+    normal_traffic_duration: 300   # 5 minutes
+    baseline_duration: 60          # 1 minute
+    attack_duration: 600           # 10 minutes
+  
+  mixed_scenario:
+    normal_traffic_duration: 900   # 15 minutes
+    baseline_duration: 180         # 3 minutes
+    attack_duration: 450           # 7.5 minutes
+
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
