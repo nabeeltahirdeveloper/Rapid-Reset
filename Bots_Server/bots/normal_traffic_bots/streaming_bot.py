@@ -3,6 +3,7 @@ import httpx
 import logging
 from datetime import datetime
 import json
+import random
 
 class StreamingBot:
     def __init__(self, bot_id, target_servers):

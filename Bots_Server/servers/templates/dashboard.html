@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cyber Ops Dashboard - {{ server_id }}</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="grid">
+      <header class="header glass">
+        <div class="brand">
+          <div class="pulse"></div>
+          <span>Cyber Ops • Server {{ server_id }}</span>
+        </div>
+        <div id="clock"></div>
+      </header>
+
+      <section class="card glass">
+        <h2>System Overview</h2>
+        <div class="kpis">
+          <div class="kpi">
+            <div class="label">CPU</div>
+            <div class="value" id="cpu-value">--%</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Memory</div>
+            <div class="value" id="mem-value">--%</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Uptime</div>
+            <div class="value" id="uptime-value">--</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Threads</div>
+            <div class="value" id="threads-value">--</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card glass">
+        <h2>CPU Utilization</h2>
+        <canvas id="cpu-chart"></canvas>
+      </section>
+
+      <section class="card glass">
+        <h2>Memory Utilization</h2>
+        <canvas id="mem-chart"></canvas>
+      </section>
+
+      <section class="card glass">
+        <h2>Load Average</h2>
+        <canvas id="load-chart"></canvas>
+      </section>
+
+      <section class="card glass">
+        <h2>Throughput</h2>
+        <div class="kpis">
+          <div class="kpi">
+            <div class="label">RPS (1s)</div>
+            <div class="value" id="rps-1s">--</div>
+          </div>
+          <div class="kpi">
+            <div class="label">RPS (60s avg)</div>
+            <div class="value" id="rps-60s">--</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Queue</div>
+            <div class="value" id="queue-size">--</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Rate Limit</div>
+            <div class="value" id="ratelimit">--</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card glass">
+        <h2>Workers</h2>
+        <div id="workers" class="list"></div>
+      </section>
+
+      <section class="card glass">
+        <h2>Endpoints (Top)</h2>
+        <div id="endpoints" class="list"></div>
+      </section>
+
+      <section class="card glass">
+        <h2>Recent Requests</h2>
+        <div id="recent" class="list"></div>
+      </section>
+
+      <footer class="footer">
+        <span>© Cyber Operations Console</span>
+      </footer>
+    </div>
+
+    <script src="/static/dashboard.js"></script>
+  </body>
+  </html>
+
+

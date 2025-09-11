@@ -3,6 +3,7 @@ import yaml
 import logging
 from datetime import datetime
 import random
+from utils.profiling import AsyncPhaseProfiler
 
 from bots.normal_traffic_bots.web_browser_bot import WebBrowserBot
 from bots.normal_traffic_bots.streaming_bot import StreamingBot
@@ -52,7 +53,8 @@ class BotController:
                     bot_id=f"attack_{intensity}_{j}",
                     target_host="localhost",  # Adjust based on your setup
                     target_port=8000,
-                    attack_intensity=intensity
+                    attack_intensity=intensity,
+                    use_tls=False
                 )
                 self.bots.append(bot)
     
@@ -62,10 +64,23 @@ class BotController:
         self.logger.info(f"Starting scenario: {scenario_name}")
         
         tasks = []
+        phase_tasks = []
+
+        async def _auto_stop(profiler: AsyncPhaseProfiler, seconds: float):
+            try:
+                await asyncio.sleep(seconds)
+            finally:
+                await profiler.stop()
         
         # Normal traffic phase
         if scenario.get('normal_traffic_duration', 0) > 0:
             self.logger.info("Starting normal traffic phase")
+            normal_profiler = AsyncPhaseProfiler(
+                phase_name="normal_traffic",
+                extra_metadata={"scenario": scenario_name}
+            )
+            await normal_profiler.start()
+            phase_tasks.append(asyncio.create_task(_auto_stop(normal_profiler, scenario['normal_traffic_duration'])))
             for bot in self.bots:
                 if 'attack' not in bot.__class__.__name__.lower():
                     task = asyncio.create_task(
@@ -75,11 +90,23 @@ class BotController:
         
         # Wait for normal traffic to establish baseline
         if scenario.get('baseline_duration', 0) > 0:
+            baseline_profiler = AsyncPhaseProfiler(
+                phase_name="baseline",
+                extra_metadata={"scenario": scenario_name}
+            )
+            await baseline_profiler.start()
+            phase_tasks.append(asyncio.create_task(_auto_stop(baseline_profiler, scenario['baseline_duration'])))
             await asyncio.sleep(scenario['baseline_duration'])
         
         # Attack phase
         if scenario.get('attack_duration', 0) > 0:
             self.logger.info("Starting attack phase")
+            attack_profiler = AsyncPhaseProfiler(
+                phase_name="attack",
+                extra_metadata={"scenario": scenario_name}
+            )
+            await attack_profiler.start()
+            phase_tasks.append(asyncio.create_task(_auto_stop(attack_profiler, scenario['attack_duration'])))
             for bot in self.bots:
                 if 'attack' in bot.__class__.__name__.lower():
                     task = asyncio.create_task(
@@ -88,7 +115,7 @@ class BotController:
                     tasks.append(task)
         
         # Wait for all tasks to complete
-        await asyncio.gather(*tasks, return_exceptions=True)
+        await asyncio.gather(*tasks, *phase_tasks, return_exceptions=True)
         self.logger.info(f"Scenario {scenario_name} completed")
     
     async def run_continuous_simulation(self, duration=3600):

