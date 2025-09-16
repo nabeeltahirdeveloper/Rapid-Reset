@@ -9,9 +9,13 @@ from hypercorn.config import Config
 from hypercorn.asyncio import serve
 from quart import Quart, request, jsonify, Response, g, render_template
 import asyncio
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 import psutil
 from datetime import datetime
+
+from utils.enhanced_request_queue import EnhancedRequestQueue, QueuePriority
+from utils.client_connection_manager import ClientConnectionManager
+from utils.enhanced_profiling import ProfilerManager, EnhancedPhaseProfiler
 
 class HTTP2Server:
     def __init__(self, host="localhost", port=8000, server_id="server_1", rate_limit_max_requests=100, rate_limit_window_seconds=60, queue_maxsize=1000, queue_workers=4, queue_enqueue_timeout=0.25, queue_processing_timeout=30.0):
@@ -27,27 +31,51 @@ class HTTP2Server:
         self.connection_count = 0
         self.start_time = time.time()
         self._process = psutil.Process(os.getpid())
+        
         # Rate limit configuration
         self.rate_limit_max_requests = int(rate_limit_max_requests)
         self.rate_limit_window_seconds = int(rate_limit_window_seconds)
         self._rate_limit_buckets: Dict[str, Tuple[int, int]] = {}
         self._rate_limit_lock = asyncio.Lock()
-        # Queue configuration
+        
+        # Enhanced queue system with client tracking
+        self.enhanced_queue = EnhancedRequestQueue(
+            maxsize=int(queue_maxsize),
+            workers=int(queue_workers),
+            enqueue_timeout=float(queue_enqueue_timeout),
+            processing_timeout=float(queue_processing_timeout)
+        )
+        
+        # Legacy compatibility - keep for metrics
         self.queue_maxsize = int(queue_maxsize)
         self.queue_workers = int(queue_workers)
         self.queue_enqueue_timeout = float(queue_enqueue_timeout)
         self.queue_processing_timeout = float(queue_processing_timeout)
-        self.request_queue: asyncio.Queue = asyncio.Queue(maxsize=self.queue_maxsize)
-        self.worker_tasks = []
-        # Observability state
+        
+        # Observability state (enhanced)
         self.recent_requests = deque(maxlen=50)
-        self.worker_status = {}
         self.endpoint_stats = defaultdict(lambda: {"count": 0, "avg_ms": 0.0, "max_ms": 0.0})
         self._request_timestamps = deque(maxlen=10000)
+        
+        # Client connection tracking
+        self.active_connections = set()
+        self.connection_events = deque(maxlen=1000)
+        
+        # Enhanced profiling system
+        self.profiler_manager = ProfilerManager(
+            connection_manager=self.enhanced_queue.connection_manager,
+            request_queue=self.enhanced_queue
+        )
+        self.current_phase_profiler: Optional[EnhancedPhaseProfiler] = None
+        
+        # Server running state
+        self.running = False
+        
         self.setup_routes()
         self.setup_logging()
         self.setup_rate_limiter()
-        self.setup_queue_workers()
+        self.setup_connection_handlers()
+        self.setup_enhanced_logging()
         
     def setup_logging(self):
         logging.basicConfig(
@@ -90,62 +118,237 @@ class HTTP2Server:
         @self.app.route('/dashboard')
         async def dashboard():
             return await self.handle_dashboard_request()
+        
+        @self.app.route('/api/queue-metrics')
+        async def queue_metrics():
+            """Get detailed queue metrics for analysis"""
+            try:
+                queue_metrics = await self.enhanced_queue.get_queue_metrics()
+                return jsonify({
+                    "status": "success",
+                    "server_id": self.server_id,
+                    "timestamp": datetime.now().isoformat(),
+                    "queue_metrics": queue_metrics
+                })
+            except Exception as e:
+                self.logger.error(f"Failed to get queue metrics: {e}")
+                return jsonify({
+                    "status": "error",
+                    "error": "queue_metrics_failure",
+                    "message": str(e)
+                }), 500
+        
+        @self.app.route('/api/client-connections')
+        async def client_connections():
+            """Get detailed client connection information"""
+            try:
+                system_metrics = await self.enhanced_queue.connection_manager.get_system_metrics()
+                return jsonify({
+                    "status": "success",
+                    "server_id": self.server_id,
+                    "timestamp": datetime.now().isoformat(),
+                    "connection_metrics": system_metrics,
+                    "connection_events": list(self.connection_events)[-50:]  # Last 50 events
+                })
+            except Exception as e:
+                self.logger.error(f"Failed to get connection metrics: {e}")
+                return jsonify({
+                    "status": "error",
+                    "error": "connection_metrics_failure",
+                    "message": str(e)
+                }), 500
+        
+        @self.app.route('/api/profiling/start/<phase_name>', methods=['POST'])
+        async def start_profiling(phase_name):
+            """Start profiling a specific phase"""
+            try:
+                metadata = await request.get_json() if await request.get_data() else {}
+                profiler = await self.profiler_manager.start_phase(phase_name, metadata)
+                self.current_phase_profiler = profiler
+                
+                return jsonify({
+                    "status": "success",
+                    "message": f"Started profiling phase: {phase_name}",
+                    "phase": phase_name,
+                    "timestamp": datetime.now().isoformat()
+                })
+            except Exception as e:
+                self.logger.error(f"Failed to start profiling: {e}")
+                return jsonify({
+                    "status": "error",
+                    "error": "profiling_start_failure",
+                    "message": str(e)
+                }), 500
+        
+        @self.app.route('/api/profiling/stop/<phase_name>', methods=['POST'])
+        async def stop_profiling(phase_name):
+            """Stop profiling a specific phase"""
+            try:
+                await self.profiler_manager.stop_phase(phase_name)
+                if self.current_phase_profiler and self.current_phase_profiler.phase_name == phase_name:
+                    self.current_phase_profiler = None
+                
+                return jsonify({
+                    "status": "success",
+                    "message": f"Stopped profiling phase: {phase_name}",
+                    "phase": phase_name,
+                    "timestamp": datetime.now().isoformat()
+                })
+            except Exception as e:
+                self.logger.error(f"Failed to stop profiling: {e}")
+                return jsonify({
+                    "status": "error",
+                    "error": "profiling_stop_failure",
+                    "message": str(e)
+                }), 500
 
-    def setup_queue_workers(self):
+    def setup_connection_handlers(self):
         @self.app.before_serving
-        async def start_workers():
-            for i in range(self.queue_workers):
-                self.worker_status[i] = {
-                    "worker_id": i,
-                    "busy": False,
-                    "last_path": None,
-                    "last_started_at": None,
-                    "last_finished_at": None,
-                }
-                task = asyncio.create_task(self._worker_loop(i))
-                self.worker_tasks.append(task)
+        async def start_enhanced_queue():
+            await self.enhanced_queue.start()
+            self.logger.info("Enhanced queue system started")
 
         @self.app.after_serving
-        async def stop_workers():
-            for task in self.worker_tasks:
-                task.cancel()
-            await asyncio.gather(*self.worker_tasks, return_exceptions=True)
+        async def stop_enhanced_queue():
+            await self.enhanced_queue.stop()
+            self.logger.info("Enhanced queue system stopped")
+        
+        @self.app.before_request
+        async def track_client_connection():
+            try:
+                # Register client connection
+                client_ip = request.remote_addr or "unknown"
+                user_agent = request.headers.get('User-Agent', 'unknown')
+                
+                client_id = await self.enhanced_queue.connection_manager.register_client(
+                    client_ip, user_agent
+                )
+                
+                # Store client ID in request context
+                g.client_id = client_id
+                
+                # Track connection if new
+                connection_key = f"{client_ip}:{user_agent[:50]}"
+                if connection_key not in self.active_connections:
+                    self.active_connections.add(connection_key)
+                    self.connection_count += 1
+                    
+                    self.connection_events.append({
+                        "timestamp": datetime.now().isoformat(),
+                        "event": "connection_start",
+                        "client_id": client_id,
+                        "client_ip": client_ip,
+                        "user_agent": user_agent[:100]
+                    })
+            except Exception as e:
+                self.logger.error(f"Client connection tracking failed: {e}")
+                # Provide fallback client ID
+                g.client_id = f"fallback_{int(time.time())}"
+        
+        @self.app.after_request
+        async def track_response_delivery(response):
+            # This helps track if responses are being delivered
+            client_id = getattr(g, 'client_id', None)
+            if client_id:
+                # We assume successful delivery if we reach here
+                # In a real scenario, we'd need more sophisticated tracking
+                pass
+            return response
 
-    async def _worker_loop(self, worker_id: int):
-        try:
-            while True:
-                job = await self.request_queue.get()
-                method = job.get("method")
-                path = job.get("path")
-                extra_data = job.get("extra_data")
-                future: asyncio.Future = job.get("future")
+    async def handle_client_disconnection(self, client_id: str):
+        """Handle client disconnection event"""
+        await self.enhanced_queue.connection_manager.mark_client_disconnected(client_id)
+        
+        # Log disconnection
+        self.connection_events.append({
+            "timestamp": datetime.now().isoformat(),
+            "event": "connection_end",
+            "client_id": client_id
+        })
+        
+        self.logger.info(f"Client {client_id} disconnected")
+    
+    def setup_enhanced_logging(self):
+        """Setup comprehensive logging for all endpoints and queue states"""
+        
+        @self.app.before_request
+        async def log_request_start():
+            """Log detailed request start information"""
+            client_id = getattr(g, 'client_id', 'unknown')
+            
+            request_log = {
+                "event": "request_start",
+                "timestamp": datetime.now().isoformat(),
+                "server_id": self.server_id,
+                "client_id": client_id,
+                "method": request.method,
+                "path": request.path,
+                "query_string": request.query_string.decode() if request.query_string else "",
+                "headers": dict(request.headers),
+                "remote_addr": request.remote_addr,
+                "user_agent": request.headers.get('User-Agent', 'unknown')
+            }
+            
+            # Store in request context for later use
+            g.request_start_log = request_log
+            
+            self.logger.info(json.dumps(request_log))
+        
+        @self.app.after_request
+        async def log_request_complete(response):
+            """Log detailed request completion information"""
+            client_id = getattr(g, 'client_id', 'unknown')
+            request_log = getattr(g, 'request_start_log', {})
+            
+            completion_log = {
+                "event": "request_complete",
+                "timestamp": datetime.now().isoformat(),
+                "server_id": self.server_id,
+                "client_id": client_id,
+                "method": request.method,
+                "path": request.path,
+                "status_code": response.status_code,
+                "response_headers": dict(response.headers),
+                "content_length": response.headers.get('Content-Length', 'unknown')
+            }
+            
+            # Add timing if available
+            if request_log and 'timestamp' in request_log:
                 try:
-                    # Mark worker busy
-                    status = self.worker_status.get(worker_id)
-                    if status is not None:
-                        status["busy"] = True
-                        status["last_path"] = path
-                        status["last_started_at"] = time.time()
-                    result_payload = await self._process_request(method, path, extra_data)
-                    if not future.done():
-                        future.set_result(result_payload)
-                except Exception as e:
-                    if not future.done():
-                        future.set_result({
-                            "status": "error",
-                            "error": "processing_failed",
-                            "message": str(e),
-                            "server_id": self.server_id
-                        })
-                finally:
-                    # Mark worker idle
-                    status = self.worker_status.get(worker_id)
-                    if status is not None:
-                        status["busy"] = False
-                        status["last_finished_at"] = time.time()
-                    self.request_queue.task_done()
-        except asyncio.CancelledError:
-            return
+                    start_time = datetime.fromisoformat(request_log['timestamp'].replace('Z', '+00:00'))
+                    end_time = datetime.now()
+                    completion_log['total_response_time_ms'] = (end_time - start_time.replace(tzinfo=None)).total_seconds() * 1000
+                except:
+                    pass
+            
+            self.logger.info(json.dumps(completion_log))
+            
+            return response
+        
+        @self.app.teardown_request
+        async def log_queue_state(exception):
+            """Log queue state after each request"""
+            try:
+                if hasattr(self, 'running') and getattr(self, 'running', False):
+                    queue_metrics = await self.enhanced_queue.get_queue_metrics()
+                    
+                    queue_log = {
+                        "event": "queue_state",
+                        "timestamp": datetime.now().isoformat(),
+                        "server_id": self.server_id,
+                        "queue_size": queue_metrics["queue"]["total_size"],
+                        "queue_utilization": queue_metrics["queue"]["utilization_percent"],
+                        "active_requests": queue_metrics["metrics"]["active_requests"],
+                        "abandoned_requests": queue_metrics["metrics"]["total_abandoned"],
+                        "worker_busy_count": sum(1 for w in queue_metrics["workers"] if w["busy"])
+                    }
+                    
+                    # Only log if queue has significant activity
+                    if queue_log["queue_size"] > 0 or queue_log["abandoned_requests"] > 0:
+                        self.logger.debug(json.dumps(queue_log))
+            except Exception as e:
+                # Don't let logging errors break the request
+                self.logger.debug(f"Queue state logging error: {e}")
 
     async def _process_request(self, method, path, extra_data=None):
         start_time = time.time()
@@ -256,36 +459,88 @@ class HTTP2Server:
                 response.headers["X-RateLimit-Reset"] = str(reset_epoch)
             return response
         
-    async def handle_request(self, method, path, extra_data=None):
+    async def handle_request(self, method, path, extra_data=None, priority: QueuePriority = QueuePriority.NORMAL):
+        """Enhanced request handling with client tracking"""
         self.request_count += 1
-        future: asyncio.Future = asyncio.get_event_loop().create_future()
-        job = {"method": method, "path": path, "extra_data": extra_data, "future": future}
-        try:
-            await asyncio.wait_for(self.request_queue.put(job), timeout=self.queue_enqueue_timeout)
-        except asyncio.TimeoutError:
-            response = jsonify({
-                "status": "error",
-                "error": "queue_full",
-                "message": "Server is busy. Please retry later.",
-                "server_id": self.server_id
-            })
-            response.status_code = 503
-            response.headers["Retry-After"] = "1"
-            return response
+        
+        # Get client ID from request context
+        client_id = getattr(g, 'client_id', None)
+        if not client_id:
+            # Fallback client registration
+            client_ip = request.remote_addr or "unknown"
+            user_agent = request.headers.get('User-Agent', 'unknown')
+            client_id = await self.enhanced_queue.connection_manager.register_client(
+                client_ip, user_agent
+            )
+        
+        # Determine priority based on path
+        if "heavy" in path:
+            priority = QueuePriority.LOW
+        elif "api" in path:
+            priority = QueuePriority.HIGH
+        elif path in ["/metrics", "/dashboard"]:
+            priority = QueuePriority.CRITICAL
         
         try:
+            # Enqueue with enhanced tracking
+            future = await self.enhanced_queue.enqueue_request(
+                client_id=client_id,
+                method=method,
+                path=path,
+                extra_data=extra_data,
+                priority=priority
+            )
+            
+            # Wait for processing with timeout
             payload = await asyncio.wait_for(future, timeout=self.queue_processing_timeout)
+            
+            # Update metrics
+            if payload.get("status") == "success":
+                processing_time = payload.get("processing_time_ms", 0)
+                self._update_endpoint_stats(path, processing_time)
+                
+                self.recent_requests.append({
+                    "timestamp": datetime.now().isoformat(timespec='seconds'),
+                    "method": method,
+                    "path": path,
+                    "response_time_ms": round(processing_time, 2),
+                    "client_id": client_id
+                })
+                
+                self._request_timestamps.append(time.time())
+            
+            return jsonify(payload)
+            
         except asyncio.TimeoutError:
             response = jsonify({
                 "status": "error",
                 "error": "processing_timeout",
                 "message": "Request timed out while waiting in queue.",
-                "server_id": self.server_id
+                "server_id": self.server_id,
+                "client_id": client_id
             })
             response.status_code = 504
             return response
         
-        return jsonify(payload)
+        except Exception as e:
+            self.logger.error(f"Request handling failed: {e}")
+            response = jsonify({
+                "status": "error",
+                "error": "request_failed",
+                "message": str(e),
+                "server_id": self.server_id,
+                "client_id": client_id
+            })
+            response.status_code = 500
+            return response
+    
+    def _update_endpoint_stats(self, path: str, processing_time: float):
+        """Update endpoint statistics"""
+        stats = self.endpoint_stats[path]
+        stats["count"] += 1
+        stats["avg_ms"] += (processing_time - stats["avg_ms"]) / stats["count"]
+        if processing_time > stats["max_ms"]:
+            stats["max_ms"] = processing_time
     
     async def handle_streaming_request(self):
         async def generate_stream():
@@ -303,18 +558,33 @@ class HTTP2Server:
         return await self.fibonacci_task(n-1) + await self.fibonacci_task(n-2) if n < 35 else n
 
     async def handle_metrics_request(self):
+        """Enhanced metrics including queue and client tracking"""
         try:
+            # Get enhanced metrics
+            queue_metrics = await self.enhanced_queue.get_queue_metrics()
             system_metrics = self._collect_system_metrics()
+            
+            # Combine all metrics
+            combined_metrics = {
+                **system_metrics,
+                "enhanced_queue": queue_metrics,
+                "connections": {
+                    "active_connections": len(self.active_connections),
+                    "total_connections": self.connection_count,
+                    "recent_events": list(self.connection_events)[-10:]  # Last 10 events
+                }
+            }
+            
             response = jsonify({
                 "status": "success",
                 "server_id": self.server_id,
                 "timestamp": datetime.now().isoformat(),
-                "metrics": system_metrics,
+                "metrics": combined_metrics,
             })
             response.status_code = 200
             return response
         except Exception as e:
-            self.logger.error(f"Failed to collect metrics: {e}")
+            self.logger.error(f"Failed to collect enhanced metrics: {e}")
             response = jsonify({
                 "status": "error",
                 "error": "metrics_failure",
@@ -360,17 +630,9 @@ class HTTP2Server:
         except Exception:
             pass
 
-        # Workers snapshot
+        # Enhanced queue worker information is now provided by queue_metrics
+        # This is handled in handle_metrics_request
         workers = []
-        for wid in sorted(self.worker_status.keys()):
-            st = self.worker_status[wid]
-            workers.append({
-                "worker_id": wid,
-                "busy": bool(st.get("busy")),
-                "last_path": st.get("last_path"),
-                "last_started_at": st.get("last_started_at"),
-                "last_finished_at": st.get("last_finished_at"),
-            })
 
         # Endpoint stats snapshot (top 10 by count)
         endpoints = []
@@ -406,9 +668,7 @@ class HTTP2Server:
                 "num_threads": self._process.num_threads(),
             },
             "server": {
-                "queue_size": self.request_queue.qsize(),
                 "queue_maxsize": self.queue_maxsize,
-                "workers": workers,
                 "endpoints": endpoints,
                 "recent_requests": list(self.recent_requests),
                 "rps_1s": rps_1s,
@@ -419,6 +679,10 @@ class HTTP2Server:
                     "window_seconds": self.rate_limit_window_seconds,
                     "approx_total_in_window": total_in_window,
                 },
+                "connections": {
+                    "active": len(self.active_connections),
+                    "total": self.connection_count
+                }
             },
         }
 
@@ -443,5 +707,16 @@ class HTTP2Server:
         config.h2c = True
         config.alpn_protocols = ['h2', 'http/1.1']
         
-        self.logger.info(f"Starting HTTP/2 server on {self.host}:{self.port}")
-        await serve(self.app, config)
+        # Mark server as running for logging
+        self.running = True
+        
+        self.logger.info(f"Starting enhanced HTTP/2 server on {self.host}:{self.port}")
+        self.logger.info(f"Queue system: {self.queue_maxsize} max size, {self.queue_workers} workers")
+        self.logger.info(f"Rate limiting: {self.rate_limit_max_requests} requests per {self.rate_limit_window_seconds}s")
+        
+        try:
+            await serve(self.app, config)
+        finally:
+            self.running = False
+            # Stop all profiling on server shutdown
+            await self.profiler_manager.stop_all()

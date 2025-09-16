@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cyber Ops Dashboard - {{ server_id }}</title>
+    <title>HTTP/2 Rapid Reset Analysis Dashboard - {{ server_id }}</title>
     <link rel="stylesheet" href="/static/styles.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,10 +15,47 @@
       <header class="header glass">
         <div class="brand">
           <div class="pulse"></div>
-          <span>Cyber Ops • Server {{ server_id }}</span>
+          <span id="server-id">{{ server_id }}</span>
+          <span>HTTP/2 Attack Analysis Dashboard</span>
         </div>
-        <div id="clock"></div>
+        <div class="header-controls">
+          <div class="phase-indicator">
+            Phase: <span id="current-phase" class="badge badge-green">NORMAL</span>
+          </div>
+          <div id="clock"></div>
+        </div>
       </header>
+
+      <!-- Phase Alerts -->
+      <section id="phase-alerts" class="alerts"></section>
+
+      <!-- Attack Pattern Detection -->
+      <section class="card glass">
+        <h2>🚨 Attack Detection</h2>
+        <div class="kpis">
+          <div class="kpi">
+            <div class="label">Attack Patterns</div>
+            <div class="value" id="attack-patterns">
+              <span class="badge badge-green">No Threats</span>
+            </div>
+          </div>
+          <div class="kpi">
+            <div class="label">Queue Risk</div>
+            <div class="value" id="queue-utilization">0%</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Abandonment Rate</div>
+            <div class="value" id="abandonment-rate">0%</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Controls</div>
+            <div class="value">
+              <button id="start-profiling" class="btn btn-sm">Start Profiling</button>
+              <button id="stop-profiling" class="btn btn-sm">Stop Profiling</button>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section class="card glass">
         <h2>System Overview</h2>
@@ -42,23 +79,96 @@
         </div>
       </section>
 
+      <!-- Queue State Analysis -->
       <section class="card glass">
-        <h2>CPU Utilization</h2>
-        <canvas id="cpu-chart"></canvas>
+        <h2>📊 Queue State & Abandonment Analysis</h2>
+        <div class="kpis">
+          <div class="kpi">
+            <div class="label">Queue Size</div>
+            <div class="value" id="queue-size">0</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Active Requests</div>
+            <div class="value" id="active-requests">0</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Abandoned</div>
+            <div class="value" id="abandoned-requests">0</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Queue Utilization</div>
+            <div class="value" id="queue-utilization-detailed">0%</div>
+          </div>
+        </div>
+        <canvas id="queue-chart"></canvas>
       </section>
 
+      <!-- Client Connection Analysis -->
       <section class="card glass">
-        <h2>Memory Utilization</h2>
-        <canvas id="mem-chart"></canvas>
+        <h2>🔗 Client Connection Lifecycle</h2>
+        <div class="kpis">
+          <div class="kpi">
+            <div class="label">Active Connections</div>
+            <div class="value" id="active-connections">0</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Total Connections</div>
+            <div class="value" id="total-connections">0</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Reconnections</div>
+            <div class="value" id="reconnections">0</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Reset Timer (3s)</div>
+            <div class="value">⏱️ Monitoring</div>
+          </div>
+        </div>
+        <canvas id="connection-chart"></canvas>
       </section>
 
+      <!-- Attack Pattern Detection Chart -->
       <section class="card glass">
-        <h2>Load Average</h2>
-        <canvas id="load-chart"></canvas>
+        <h2>🎯 Attack Pattern Detection</h2>
+        <canvas id="attack-chart"></canvas>
       </section>
 
+      <!-- System Overview (Enhanced) -->
       <section class="card glass">
-        <h2>Throughput</h2>
+        <h2>💻 System Overview</h2>
+        <div class="kpis">
+          <div class="kpi">
+            <div class="label">CPU</div>
+            <div class="value" id="cpu-value">--%</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Memory</div>
+            <div class="value" id="mem-value">--%</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Uptime</div>
+            <div class="value" id="uptime-value">--</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Threads</div>
+            <div class="value" id="threads-value">--</div>
+          </div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-container">
+            <h3>CPU Utilization</h3>
+            <canvas id="cpu-chart"></canvas>
+          </div>
+          <div class="chart-container">
+            <h3>Memory Utilization</h3>
+            <canvas id="mem-chart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Throughput Analysis -->
+      <section class="card glass">
+        <h2>🚀 Throughput & Performance</h2>
         <div class="kpis">
           <div class="kpi">
             <div class="label">RPS (1s)</div>
@@ -69,36 +179,100 @@
             <div class="value" id="rps-60s">--</div>
           </div>
           <div class="kpi">
-            <div class="label">Queue</div>
-            <div class="value" id="queue-size">--</div>
-          </div>
-          <div class="kpi">
             <div class="label">Rate Limit</div>
             <div class="value" id="ratelimit">--</div>
           </div>
+          <div class="kpi">
+            <div class="label">Load Average</div>
+            <div class="value">📈 Monitoring</div>
+          </div>
         </div>
+        <canvas id="load-chart"></canvas>
       </section>
 
+      <!-- Enhanced Worker Analysis -->
       <section class="card glass">
-        <h2>Workers</h2>
+        <h2>⚙️ Worker Performance Analysis</h2>
+        <div id="worker-table-container">
+          <table class="worker-table">
+            <thead>
+              <tr>
+                <th>Worker ID</th>
+                <th>Status</th>
+                <th>Current Path</th>
+                <th>Processed</th>
+                <th>Abandoned</th>
+                <th>Avg Time</th>
+              </tr>
+            </thead>
+            <tbody id="worker-table-body">
+              <!-- Dynamic worker data -->
+            </tbody>
+          </table>
+        </div>
         <div id="workers" class="list"></div>
       </section>
 
+      <!-- Request Abandonment Analysis -->
       <section class="card glass">
-        <h2>Endpoints (Top)</h2>
+        <h2>📈 Abandonment Analysis</h2>
+        <div id="abandonment-analysis">
+          <!-- Dynamic abandonment analysis -->
+        </div>
+      </section>
+
+      <!-- Endpoints Analysis -->
+      <section class="card glass">
+        <h2>🎯 Endpoint Analysis</h2>
         <div id="endpoints" class="list"></div>
       </section>
 
+      <!-- Recent Activity -->
       <section class="card glass">
-        <h2>Recent Requests</h2>
-        <div id="recent" class="list"></div>
+        <h2>📝 Recent Activity</h2>
+        <div class="activity-tabs">
+          <button class="tab-btn active" onclick="switchTab('requests')">Recent Requests</button>
+          <button class="tab-btn" onclick="switchTab('connections')">Connection Events</button>
+          <button class="tab-btn" onclick="switchTab('attacks')">Attack Events</button>
+        </div>
+        <div id="recent" class="list tab-content active"></div>
+        <div id="connection-events" class="list tab-content"></div>
+        <div id="attack-events" class="list tab-content"></div>
       </section>
 
       <footer class="footer">
-        <span>© Cyber Operations Console</span>
+        <div class="footer-info">
+          <span>© HTTP/2 Rapid Reset Attack Analysis Console</span>
+          <span>Real-time Queue & Connection Monitoring</span>
+        </div>
+        <div class="footer-controls">
+          <label>
+            Refresh Rate:
+            <select id="refresh-interval">
+              <option value="500">0.5s</option>
+              <option value="1000" selected>1s</option>
+              <option value="2000">2s</option>
+              <option value="5000">5s</option>
+            </select>
+          </label>
+          <button id="manual-refresh" class="btn btn-sm">Refresh Now</button>
+        </div>
       </footer>
     </div>
 
+    <script>
+      function switchTab(tabName) {
+        // Remove active class from all tabs and content
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        // Add active class to clicked tab and corresponding content
+        event.target.classList.add('active');
+        document.getElementById(tabName === 'requests' ? 'recent' :
+                               tabName === 'connections' ? 'connection-events' : 'attack-events')
+                .classList.add('active');
+      }
+    </script>
     <script src="/static/dashboard.js"></script>
   </body>
   </html>

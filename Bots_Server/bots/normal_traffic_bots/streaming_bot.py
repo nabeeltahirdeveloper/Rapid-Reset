@@ -21,7 +21,11 @@ class StreamingBot:
     
     async def simulate_streaming_session(self, server_url):
         """Simulate long-running streaming connection"""
-        async with httpx.AsyncClient(http2=True) as client:
+        async with httpx.AsyncClient(
+            http2=False,
+            timeout=httpx.Timeout(connect=10.0, read=300.0),  # Longer timeout for streaming
+            verify=False
+        ) as client:
             try:
                 start_time = datetime.now()
                 

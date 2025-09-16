@@ -39,7 +39,11 @@ class WebBrowserBot:
             "/api/notifications"
         ]
         
-        async with httpx.AsyncClient(http2=True) as client:
+        async with httpx.AsyncClient(
+            http2=False,
+            timeout=httpx.Timeout(connect=10.0, read=30.0),
+            verify=False
+        ) as client:
             # Simulate user session
             session_duration = random.uniform(30, 180)  # 30s to 3min
             session_start = asyncio.get_event_loop().time()
